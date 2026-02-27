@@ -1,0 +1,551 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>Car Rider HQ 🚗</title>
+<link href="https://fonts.googleapis.com/css2?family=Fredoka+One&family=Nunito:wght@400;600;700;800;900&display=swap" rel="stylesheet"/>
+<style>
+  :root {
+    --gold: #f7c948;
+    --gold2: #f5a623;
+    --dark: #0d1b2a;
+    --dark2: #1a2d44;
+    --dark3: #162233;
+    --green: #27ae60;
+    --red: #e74c3c;
+    --blue: #3498db;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { font-family: 'Nunito', sans-serif; background: var(--dark); min-height: 100vh; }
+
+  /* HEADER */
+  .header {
+    background: linear-gradient(135deg, var(--gold) 0%, var(--gold2) 100%);
+    padding: 14px 20px;
+    display: flex; align-items: center; justify-content: space-between;
+    flex-wrap: wrap; gap: 12px;
+    position: sticky; top: 0; z-index: 100;
+    box-shadow: 0 4px 24px rgba(0,0,0,0.4);
+  }
+  .logo { display: flex; align-items: center; gap: 10px; }
+  .logo-icon { font-size: 32px; }
+  .logo-title { font-family: 'Fredoka One', cursive; font-size: 22px; color: var(--dark); line-height: 1; }
+  .logo-sub { font-size: 11px; font-weight: 800; color: #7a5c00; margin-top: 2px; }
+  .nav { display: flex; gap: 6px; flex-wrap: wrap; }
+  .nav-btn {
+    padding: 8px 14px; border-radius: 50px; border: 2px solid rgba(13,27,42,0.2);
+    background: rgba(13,27,42,0.1); color: var(--dark);
+    font-family: 'Nunito', sans-serif; font-weight: 800; font-size: 12px;
+    cursor: pointer; transition: all .15s;
+  }
+  .nav-btn:hover { background: rgba(13,27,42,0.2); }
+  .nav-btn.active { background: var(--dark); color: var(--gold); border-color: var(--dark); }
+
+  /* CONTENT */
+  .content { padding: 24px 16px; max-width: 1000px; margin: 0 auto; }
+  .view { display: none; }
+  .view.active { display: block; }
+
+  /* CARDS */
+  .card { background: var(--dark2); border-radius: 20px; padding: 22px; border: 1px solid rgba(255,255,255,0.08); }
+  .card-light { background: white; border-radius: 20px; padding: 28px; box-shadow: 0 8px 40px rgba(0,0,0,0.3); max-width: 500px; margin: 0 auto; }
+
+  /* TYPOGRAPHY */
+  .section-title { font-family: 'Fredoka One', cursive; font-size: 20px; color: white; margin-bottom: 14px; }
+  .label { display: block; font-size: 11px; font-weight: 800; color: rgba(255,255,255,0.45); letter-spacing: 1.5px; text-transform: uppercase; margin-bottom: 7px; }
+  .label-dark { display: block; font-size: 11px; font-weight: 800; color: #777; letter-spacing: 1.5px; text-transform: uppercase; margin-bottom: 7px; }
+
+  /* INPUTS */
+  .input {
+    width: 100%; padding: 12px 16px; border: 2px solid #e0e0e0;
+    border-radius: 12px; font-family: 'Nunito', sans-serif; font-size: 16px;
+    font-weight: 700; outline: none; transition: all .2s; background: white; color: #222;
+  }
+  .input:focus { border-color: var(--gold2); box-shadow: 0 0 0 3px rgba(245,166,35,.15); }
+  select.input { appearance: auto; }
+
+  /* BUTTONS */
+  .btn {
+    border: none; border-radius: 12px; padding: 12px 22px;
+    font-family: 'Nunito', sans-serif; font-weight: 800; font-size: 15px;
+    cursor: pointer; transition: all .15s; display: inline-flex;
+    align-items: center; gap: 8px; justify-content: center;
+  }
+  .btn:hover { transform: translateY(-2px); box-shadow: 0 6px 20px rgba(0,0,0,0.25); }
+  .btn:active { transform: none; }
+  .btn-yellow { background: var(--gold); color: var(--dark); }
+  .btn-green { background: var(--green); color: white; }
+  .btn-red { background: var(--red); color: white; }
+  .btn-ghost { background: rgba(255,255,255,0.1); color: white; border: 2px solid rgba(255,255,255,0.2); }
+  .btn-ghost:hover { background: rgba(255,255,255,0.2); }
+  .btn-sm { padding: 7px 13px; font-size: 12px; border-radius: 9px; }
+  .btn-full { width: 100%; font-size: 17px; padding: 15px; }
+  .btn:disabled { opacity: .4; cursor: not-allowed; transform: none !important; box-shadow: none !important; }
+
+  /* STATS */
+  .stats-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(140px, 1fr)); gap: 12px; margin-bottom: 20px; }
+  .stat-card { background: var(--dark3); border-radius: 16px; padding: 18px; text-align: center; border: 1px solid rgba(255,255,255,0.07); }
+  .stat-num { font-family: 'Fredoka One', cursive; font-size: 40px; line-height: 1; }
+  .stat-lbl { font-size: 11px; font-weight: 800; color: rgba(255,255,255,0.45); text-transform: uppercase; letter-spacing: 1px; margin-top: 4px; }
+
+  /* QUEUE */
+  .queue-list { display: flex; flex-direction: column; gap: 10px; margin-bottom: 24px; }
+  .q-entry { border-radius: 16px; overflow: hidden; animation: slideIn .3s ease; }
+  @keyframes slideIn { from { opacity:0; transform:translateY(-10px); } to { opacity:1; transform:none; } }
+  .q-row { display: flex; align-items: center; gap: 12px; padding: 13px 16px; }
+  .q-rank { font-family: 'Fredoka One', cursive; font-size: 22px; min-width: 32px; text-align: center; }
+  .q-name { font-weight: 900; font-size: 17px; color: white; }
+  .q-info { font-size: 12px; color: rgba(255,255,255,0.5); margin-top: 2px; }
+  .q-actions { display: flex; gap: 6px; margin-left: auto; flex-shrink: 0; }
+  .q-banner { padding: 5px 16px; font-size: 12px; font-weight: 800; border-top: 1px solid; }
+
+  .entry-top5 { background: linear-gradient(135deg,#1e3a5f,#16324f); border: 2px solid var(--gold); }
+  .entry-top5 .q-rank { color: var(--gold); }
+  .entry-top5 .q-banner { color: var(--gold); border-color: rgba(247,201,72,0.25); background: rgba(247,201,72,0.07); }
+
+  .entry-called { background: #0d2e1a; border: 2px solid var(--green); }
+  .entry-called .q-rank { color: #2ecc71; }
+  .entry-called .q-banner { color: #2ecc71; border-color: rgba(39,174,96,0.25); background: rgba(39,174,96,0.08); }
+
+  .entry-wait { background: var(--dark2); border: 2px solid rgba(255,255,255,0.1); }
+  .entry-wait .q-rank { color: rgba(255,255,255,0.35); }
+
+  /* DISMISSED */
+  .dismissed-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(200px,1fr)); gap: 8px; }
+  .dismissed-card { background: rgba(39,174,96,0.08); border: 1px solid rgba(39,174,96,0.2); border-radius: 12px; padding: 10px 14px; }
+  .dismissed-name { font-weight: 800; color: rgba(255,255,255,0.7); font-size: 14px; }
+  .dismissed-info { font-size: 11px; color: rgba(255,255,255,0.35); margin-top: 2px; }
+
+  /* ALERTS */
+  .alert { padding: 14px 18px; border-radius: 14px; font-weight: 700; font-size: 14px; margin-top: 14px; text-align: center; }
+  .alert-success { background: #e8faf0; border: 2px solid var(--green); color: #0f5132; }
+  .alert-error { background: #fdf0f0; border: 2px solid var(--red); color: #c0392b; }
+
+  /* TOAST */
+  #toast {
+    position: fixed; bottom: 24px; right: 20px;
+    background: var(--green); color: white;
+    padding: 14px 20px; border-radius: 14px;
+    font-weight: 800; font-size: 15px;
+    box-shadow: 0 8px 32px rgba(0,0,0,0.4);
+    display: none; z-index: 999;
+    animation: toastIn .3s ease;
+  }
+  @keyframes toastIn { from { opacity:0; transform:translateY(16px); } to { opacity:1; transform:none; } }
+
+  /* DIVIDER */
+  .divider { height: 1px; background: rgba(255,255,255,0.07); margin: 20px 0; }
+
+  /* EMPTY */
+  .empty { text-align: center; padding: 44px 20px; color: rgba(255,255,255,0.3); }
+  .empty-icon { font-size: 52px; margin-bottom: 10px; }
+  .empty-text { font-size: 15px; font-weight: 700; }
+  .empty-sub { font-size: 13px; margin-top: 5px; }
+
+  /* FORM GAP */
+  .form-group { margin-bottom: 16px; }
+
+  /* QR */
+  .qr-wrap { background: linear-gradient(135deg,#1e3a5f,var(--dark)); border-radius: 24px; padding: 36px 24px; border: 2px solid rgba(247,201,72,0.3); text-align: center; max-width: 480px; margin: 0 auto; }
+  .qr-img-box { background: white; padding: 14px; border-radius: 16px; display: inline-block; box-shadow: 0 8px 40px rgba(0,0,0,0.4); margin: 20px 0; }
+  .how-box { background: rgba(247,201,72,0.1); border: 2px solid rgba(247,201,72,0.25); border-radius: 16px; padding: 18px; text-align: left; margin-bottom: 18px; }
+  .how-title { font-family: 'Fredoka One', cursive; font-size: 17px; color: var(--gold); margin-bottom: 10px; }
+  .how-step { color: rgba(255,255,255,0.75); font-size: 13px; line-height: 2; }
+  .how-step strong { color: white; }
+
+  /* Action bar */
+  .action-bar { display: flex; gap: 10px; flex-wrap: wrap; margin-bottom: 20px; align-items: center; }
+  .action-bar-right { margin-left: auto; color: rgba(255,255,255,0.35); font-size: 12px; font-weight: 700; }
+
+  /* Checkbox row */
+  .check-row {
+    display: flex; align-items: center; gap: 12px; padding: 13px 16px;
+    background: #f8f9fa; border-radius: 12px; border: 2px solid #e0e0e0; cursor: pointer;
+    transition: border .2s;
+  }
+  .check-row.checked { border-color: var(--gold2); background: #fffbef; }
+  .check-row input { width: 20px; height: 20px; accent-color: var(--gold2); }
+  .check-label-title { font-weight: 800; color: #333; font-size: 15px; }
+  .check-label-sub { font-size: 12px; color: #888; }
+
+  @media (max-width: 600px) {
+    .header { padding: 12px 14px; }
+    .logo-title { font-size: 18px; }
+    .nav-btn { padding: 7px 11px; font-size: 11px; }
+    .content { padding: 16px 12px; }
+    .card-light { padding: 20px 16px; }
+  }
+</style>
+</head>
+<body>
+
+<!-- HEADER -->
+<header class="header">
+  <div class="logo">
+    <div class="logo-icon">🚗</div>
+    <div>
+      <div class="logo-title">Car Rider HQ</div>
+      <div class="logo-sub">ELEMENTARY DISMISSAL SYSTEM</div>
+    </div>
+  </div>
+  <nav class="nav">
+    <button class="nav-btn active" onclick="showView('staff')">📋 Staff Board</button>
+    <button class="nav-btn" onclick="showView('checkin')">📱 Check-In</button>
+    <button class="nav-btn" onclick="showView('register')">📝 Register</button>
+    <button class="nav-btn" onclick="showView('qr')">📲 QR Code</button>
+  </nav>
+</header>
+
+<div id="toast">🟢 <span id="toast-name"></span> just checked in!</div>
+
+<div class="content">
+
+  <!-- ══════════════════════════════════════
+       STAFF BOARD
+  ══════════════════════════════════════ -->
+  <div id="view-staff" class="view active">
+    <div class="stats-grid">
+      <div class="stat-card"><div class="stat-num" id="stat-waiting" style="color:var(--gold)">0</div><div class="stat-lbl">⏳ In Queue</div></div>
+      <div class="stat-card"><div class="stat-num" id="stat-called" style="color:var(--blue)">0</div><div class="stat-lbl">📣 Called</div></div>
+      <div class="stat-card"><div class="stat-num" id="stat-dismissed" style="color:var(--green)">0</div><div class="stat-lbl">✅ Dismissed</div></div>
+      <div class="stat-card"><div class="stat-num" id="stat-families" style="color:#9b59b6">0</div><div class="stat-lbl">👨‍👩‍👧 Registered</div></div>
+    </div>
+
+    <div class="action-bar">
+      <button class="btn btn-yellow" style="font-size:16px;padding:13px 24px;" onclick="callTop5()">📣 Call Top 5 Students</button>
+      <button class="btn btn-ghost btn-sm" onclick="resetQueue()">🔄 Reset Queue</button>
+      <div class="action-bar-right" id="date-display"></div>
+    </div>
+
+    <div class="section-title">📋 Pickup Queue</div>
+    <div class="queue-list" id="queue-list"></div>
+
+    <div class="divider" id="dismissed-divider" style="display:none"></div>
+    <div class="section-title" id="dismissed-title" style="color:rgba(255,255,255,0.4);font-size:16px;display:none"></div>
+    <div class="dismissed-grid" id="dismissed-list"></div>
+  </div>
+
+  <!-- ══════════════════════════════════════
+       PARENT CHECK-IN
+  ══════════════════════════════════════ -->
+  <div id="view-checkin" class="view">
+    <div class="card-light">
+      <div style="text-align:center;margin-bottom:24px;">
+        <div style="font-size:52px;margin-bottom:10px;">📱</div>
+        <h1 style="font-family:'Fredoka One',cursive;font-size:28px;color:var(--dark);">Parent Check-In</h1>
+        <p style="color:#888;margin-top:8px;font-size:14px;line-height:1.6;">Enter your registered email to add your child to today's pickup queue.</p>
+      </div>
+      <div class="form-group">
+        <span class="label-dark">Your Registered Email</span>
+        <input class="input" type="email" id="checkin-email" placeholder="parent@email.com" onkeydown="if(event.key==='Enter')doCheckin()"/>
+      </div>
+      <button class="btn btn-yellow btn-full" onclick="doCheckin()">🚗 Check In My Child</button>
+      <div id="checkin-alert" style="display:none"></div>
+      <div style="margin-top:20px;padding:14px;background:#f8f9fa;border-radius:12px;font-size:13px;color:#888;text-align:center;font-weight:600;">
+        Not registered yet? Ask your school office to add you, or use the <strong>Register</strong> tab.
+      </div>
+    </div>
+  </div>
+
+  <!-- ══════════════════════════════════════
+       REGISTER FAMILY
+  ══════════════════════════════════════ -->
+  <div id="view-register" class="view">
+    <div class="card-light">
+      <div style="text-align:center;margin-bottom:24px;">
+        <div style="font-size:52px;margin-bottom:10px;">📝</div>
+        <h1 style="font-family:'Fredoka One',cursive;font-size:28px;color:var(--dark);">Register Your Family</h1>
+        <p style="color:#888;margin-top:8px;font-size:14px;line-height:1.6;">Do this once. Then scan the QR code each day to check in for pickup.</p>
+      </div>
+      <div class="form-group">
+        <span class="label-dark">Child's Full Name *</span>
+        <input class="input" id="reg-name" placeholder="e.g. Emma Johnson"/>
+      </div>
+      <div class="form-group">
+        <span class="label-dark">Grade *</span>
+        <select class="input" id="reg-grade">
+          <option>K</option><option>1st</option><option>2nd</option>
+          <option>3rd</option><option>4th</option><option>5th</option>
+        </select>
+      </div>
+      <div class="form-group">
+        <span class="label-dark">Guardian 1 Email *</span>
+        <input class="input" type="email" id="reg-email1" placeholder="parent1@email.com"/>
+      </div>
+      <div class="form-group">
+        <label class="check-row" id="two-guardian-row" onclick="toggleSecondGuardian()">
+          <input type="checkbox" id="two-guardian-check" onclick="event.stopPropagation();toggleSecondGuardian()"/>
+          <div>
+            <div class="check-label-title">Add a second guardian?</div>
+            <div class="check-label-sub">Both emails can check in the child</div>
+          </div>
+        </label>
+      </div>
+      <div class="form-group" id="email2-group" style="display:none">
+        <span class="label-dark">Guardian 2 Email *</span>
+        <input class="input" type="email" id="reg-email2" placeholder="parent2@email.com"/>
+      </div>
+      <button class="btn btn-yellow btn-full" onclick="doRegister()">Register My Child 🚗</button>
+      <div id="reg-alert" style="display:none"></div>
+    </div>
+  </div>
+
+  <!-- ══════════════════════════════════════
+       QR CODE
+  ══════════════════════════════════════ -->
+  <div id="view-qr" class="view">
+    <div class="qr-wrap">
+      <div style="font-family:'Fredoka One',cursive;font-size:26px;color:var(--gold);margin-bottom:6px;">🚗 Car Rider Check-In</div>
+      <div style="color:rgba(255,255,255,0.5);font-size:13px;">Scan to check in your child for pickup</div>
+      <div class="qr-img-box">
+        <img id="qr-img" src="" alt="QR Code" width="240" height="240" style="display:block;border-radius:8px;"/>
+      </div>
+      <div class="how-box">
+        <div class="how-title">📌 How It Works</div>
+        <div class="how-step">
+          1. <strong>Register once</strong> using the Register tab<br/>
+          2. <strong>Scan this QR code</strong> when you arrive for pickup<br/>
+          3. <strong>Enter your email</strong> — your child joins the queue<br/>
+          4. <strong>Listen for your child's name</strong> over the speaker<br/>
+          5. <strong>Pull up to the crossing guard</strong> to pick up your child
+        </div>
+      </div>
+      <div style="background:rgba(255,255,255,0.05);border-radius:12px;padding:14px;font-size:12px;color:rgba(255,255,255,0.5);line-height:1.6;">
+        <strong style="color:white;">For school staff:</strong> Once you host this file on a website (e.g. Netlify), update the URL in the code to match your site address. The QR code will update automatically.
+      </div>
+    </div>
+  </div>
+
+</div>
+
+<script>
+// ── State ──────────────────────────────────────────────────────────────────
+let families = JSON.parse(localStorage.getItem('cr_families') || '[]');
+let queue    = JSON.parse(localStorage.getItem('cr_queue')    || '[]');
+let called   = JSON.parse(localStorage.getItem('cr_called')   || '[]');
+let dismissed= JSON.parse(localStorage.getItem('cr_dismissed')|| '[]');
+
+const calledSet    = new Set(called);
+const dismissedSet = new Set(dismissed);
+
+function save() {
+  localStorage.setItem('cr_families',  JSON.stringify(families));
+  localStorage.setItem('cr_queue',     JSON.stringify(queue));
+  localStorage.setItem('cr_called',    JSON.stringify([...calledSet]));
+  localStorage.setItem('cr_dismissed', JSON.stringify([...dismissedSet]));
+}
+
+function uid() { return Math.random().toString(36).slice(2,10); }
+function fmtTime(iso) {
+  return new Date(iso).toLocaleTimeString([],{hour:'2-digit',minute:'2-digit',second:'2-digit'});
+}
+
+// ── Navigation ─────────────────────────────────────────────────────────────
+function showView(name) {
+  document.querySelectorAll('.view').forEach(v => v.classList.remove('active'));
+  document.querySelectorAll('.nav-btn').forEach(b => b.classList.remove('active'));
+  document.getElementById('view-' + name).classList.add('active');
+  const btns = document.querySelectorAll('.nav-btn');
+  const map = {staff:0, checkin:1, register:2, qr:3};
+  btns[map[name]].classList.add('active');
+  if (name === 'staff') renderStaff();
+  if (name === 'qr') renderQR();
+}
+
+// ── STAFF BOARD ────────────────────────────────────────────────────────────
+function renderStaff() {
+  const active = queue.filter(e => !dismissedSet.has(e.id));
+  const done   = queue.filter(e =>  dismissedSet.has(e.id));
+
+  document.getElementById('stat-waiting').textContent   = active.length;
+  document.getElementById('stat-called').textContent    = active.filter(e => calledSet.has(e.id)).length;
+  document.getElementById('stat-dismissed').textContent = done.length;
+  document.getElementById('stat-families').textContent  = families.length;
+  document.getElementById('date-display').textContent   = new Date().toLocaleDateString([], {weekday:'long', month:'long', day:'numeric'});
+
+  const list = document.getElementById('queue-list');
+  if (!active.length) {
+    list.innerHTML = `<div class="empty"><div class="empty-icon">🟡</div><div class="empty-text">No students in queue yet</div><div class="empty-sub">Parents scan the QR code to check in</div></div>`;
+  } else {
+    list.innerHTML = active.map((entry, i) => {
+      const isTop5   = i < 5;
+      const isCalled = calledSet.has(entry.id);
+      const cls      = isCalled ? 'entry-called' : isTop5 ? 'entry-top5' : 'entry-wait';
+      const rankIcon = isCalled ? '✅' : (i + 1);
+      const banner   = isCalled
+        ? `<div class="q-banner">📣 CALLED — Student has been announced</div>`
+        : isTop5
+        ? `<div class="q-banner">⭐ TOP 5 — Ready for pickup call</div>`
+        : '';
+      return `
+        <div class="q-entry ${cls}">
+          <div class="q-row">
+            <div class="q-rank">${rankIcon}</div>
+            <div style="flex:1;min-width:0;">
+              <div class="q-name">${entry.childName}</div>
+              <div class="q-info">${entry.grade} Grade · Checked in at ${fmtTime(entry.scanTime)}</div>
+            </div>
+            <div class="q-actions">
+              ${!isCalled ? `<button class="btn btn-ghost btn-sm" onclick="callOne('${entry.id}')">📣 Call</button>` : ''}
+              <button class="btn btn-green btn-sm" onclick="dismissOne('${entry.id}')">✓ Done</button>
+            </div>
+          </div>
+          ${banner}
+        </div>`;
+    }).join('');
+  }
+
+  // Dismissed section
+  const dd = document.getElementById('dismissed-divider');
+  const dt = document.getElementById('dismissed-title');
+  const dl = document.getElementById('dismissed-list');
+  if (done.length) {
+    dd.style.display = 'block';
+    dt.style.display = 'block';
+    dt.textContent = `✅ Dismissed Today (${done.length})`;
+    dl.innerHTML = done.map(e => `
+      <div class="dismissed-card">
+        <div class="dismissed-name">${e.childName}</div>
+        <div class="dismissed-info">${e.grade} · ${fmtTime(e.scanTime)}</div>
+      </div>`).join('');
+  } else {
+    dd.style.display = 'none';
+    dt.style.display = 'none';
+    dl.innerHTML = '';
+  }
+}
+
+function callOne(id) {
+  const entry = queue.find(e => e.id === id);
+  if (!entry) return;
+  calledSet.add(id);
+  save();
+  speak(`Now calling ${entry.childName}, ${entry.grade} grade. Please come to the pickup area.`);
+  renderStaff();
+}
+
+function callTop5() {
+  const active = queue.filter(e => !dismissedSet.has(e.id)).slice(0, 5);
+  if (!active.length) return;
+  active.forEach(e => calledSet.add(e.id));
+  save();
+  const names = active.map(e => `${e.childName}, ${e.grade} grade`).join('. Next, ');
+  speak(`Attention please. Now calling the following students for car rider pickup: ${names}. Please make your way to the pickup area now.`);
+  renderStaff();
+}
+
+function dismissOne(id) {
+  dismissedSet.add(id);
+  save();
+  renderStaff();
+}
+
+function resetQueue() {
+  if (!confirm('Clear today\'s entire queue? This cannot be undone.')) return;
+  queue = []; calledSet.clear(); dismissedSet.clear();
+  save(); renderStaff();
+}
+
+// ── SPEECH ─────────────────────────────────────────────────────────────────
+function speak(text) {
+  if (!window.speechSynthesis) return;
+  window.speechSynthesis.cancel();
+  const u = new SpeechSynthesisUtterance(text);
+  u.rate = 0.88; u.pitch = 1.05; u.volume = 1;
+  window.speechSynthesis.speak(u);
+}
+
+// ── PARENT CHECK-IN ────────────────────────────────────────────────────────
+function doCheckin() {
+  const email = document.getElementById('checkin-email').value.trim().toLowerCase();
+  const alertEl = document.getElementById('checkin-alert');
+  if (!email) return;
+
+  const fam = families.find(f =>
+    f.email1.toLowerCase() === email ||
+    (f.email2 && f.email2.toLowerCase() === email)
+  );
+  if (!fam) {
+    showAlert(alertEl, false, '⚠️ Email not found. Please register first or check your spelling.');
+    return;
+  }
+  const already = queue.find(e => e.familyId === fam.id && !dismissedSet.has(e.id));
+  if (already) {
+    showAlert(alertEl, false, `${fam.childName} is already in the queue!`);
+    return;
+  }
+  const entry = { id: uid(), familyId: fam.id, childName: fam.childName, grade: fam.grade, scanTime: new Date().toISOString() };
+  queue.push(entry);
+  save();
+  document.getElementById('checkin-email').value = '';
+  showAlert(alertEl, true, `✅ ${fam.childName} has been added to the pickup queue! Listen for your child's name.`);
+  showToast(fam.childName);
+}
+
+// ── REGISTER ───────────────────────────────────────────────────────────────
+function toggleSecondGuardian() {
+  const chk = document.getElementById('two-guardian-check');
+  const row = document.getElementById('two-guardian-row');
+  const grp = document.getElementById('email2-group');
+  setTimeout(() => {
+    if (chk.checked) { grp.style.display = 'block'; row.classList.add('checked'); }
+    else             { grp.style.display = 'none';  row.classList.remove('checked'); }
+  }, 0);
+}
+
+function doRegister() {
+  const name   = document.getElementById('reg-name').value.trim();
+  const grade  = document.getElementById('reg-grade').value;
+  const email1 = document.getElementById('reg-email1').value.trim().toLowerCase();
+  const hastwo = document.getElementById('two-guardian-check').checked;
+  const email2 = hastwo ? document.getElementById('reg-email2').value.trim().toLowerCase() : '';
+  const alertEl = document.getElementById('reg-alert');
+
+  if (!name || !email1) { showAlert(alertEl, false, 'Please fill in all required fields.'); return; }
+  if (hastwo && !email2) { showAlert(alertEl, false, 'Please enter Guardian 2\'s email or uncheck the option.'); return; }
+  if (families.find(f => f.email1.toLowerCase() === email1)) {
+    showAlert(alertEl, false, 'This email is already registered.'); return;
+  }
+
+  families.push({ id: uid(), childName: name, grade, email1, email2, createdAt: new Date().toISOString() });
+  save();
+  document.getElementById('reg-name').value = '';
+  document.getElementById('reg-email1').value = '';
+  document.getElementById('reg-email2').value = '';
+  document.getElementById('two-guardian-check').checked = false;
+  document.getElementById('email2-group').style.display = 'none';
+  document.getElementById('two-guardian-row').classList.remove('checked');
+  showAlert(alertEl, true, `✅ ${name} has been registered! Parents can now check in at the QR station.`);
+  renderStaff();
+}
+
+// ── QR CODE ────────────────────────────────────────────────────────────────
+function renderQR() {
+  // Uses current page URL — update this to your real hosted URL
+  const url = window.location.href.split('#')[0];
+  const encoded = encodeURIComponent(url);
+  document.getElementById('qr-img').src =
+    `https://api.qrserver.com/v1/create-qr-code/?size=240x240&data=${encoded}&margin=8&color=0d1b2a`;
+}
+
+// ── HELPERS ────────────────────────────────────────────────────────────────
+function showAlert(el, ok, msg) {
+  el.className = 'alert ' + (ok ? 'alert-success' : 'alert-error');
+  el.textContent = msg;
+  el.style.display = 'block';
+  if (ok) setTimeout(() => { el.style.display = 'none'; }, 5000);
+}
+
+function showToast(name) {
+  const t = document.getElementById('toast');
+  document.getElementById('toast-name').textContent = name;
+  t.style.display = 'block';
+  setTimeout(() => { t.style.display = 'none'; }, 3500);
+}
+
+// ── INIT ───────────────────────────────────────────────────────────────────
+renderStaff();
+</script>
+</body>
+</html>
